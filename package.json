@@ -1,0 +1,32 @@
+{
+  "name": "binary-parser-tool",
+  "version": "0.0.1",
+  "description": "Utility for generating parsers suitable for Chirpstack v3 and Chirpstack v4, and not only, using binary-parser",
+  "keywords": [
+    "binary",
+    "parser",
+    "decode",
+    "unpack",
+    "struct",
+    "buffer",
+    "bit",
+    "chirpstack",
+    "lora",
+    "iot"
+  ],
+  "homepage": "https://github.com/Lezvix/binary-parser-tool#readme",
+  "bugs": {
+    "url": "https://github.com/Lezvix/binary-parser-tool/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lezvix/binary-parser-tool.git"
+  },
+  "license": "MIT",
+  "author": "Lezvix",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
