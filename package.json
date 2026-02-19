@@ -31,5 +31,8 @@
   },
   "devDependencies": {
     "binary-parser": "^2.3.0"
+  },
+  "dependencies": {
+    "@swc/core": "^1.15.11"
   }
 }
