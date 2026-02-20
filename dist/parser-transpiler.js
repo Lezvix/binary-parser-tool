@@ -5,10 +5,12 @@ const getValueRegexp = /^(?<var>.+)\s=\sdataView.get(?<kind>.+)\(offset,?\s?(?<l
 const importCallRegexp = /^(?<var>\S+)\s=\simports\[(?<id>\d+)\]\.call\((?<args>.+)\);$/;
 export async function transpile(parser) {
     const oldBody = parser.getCode();
-    const imports = await transpileImports(parser);
     const readers = new Set();
     const lines = [];
-    lines.push(imports);
+    const imports = await transpileImports(parser);
+    if (imports) {
+        lines.push(imports);
+    }
     for (const rawLine of oldBody.split("\n")) {
         const line = rawLine.trim();
         if (line === "") {

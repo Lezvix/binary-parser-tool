@@ -17,12 +17,14 @@ export interface TranspileResult {
 
 export async function transpile(parser: Parser): Promise<TranspileResult> {
     const oldBody = parser.getCode();
-    const imports = await transpileImports(parser);
     const readers = new Set<ReaderType>();
-
+    
     const lines: string[] = [];
-
-    lines.push(imports);
+    
+    const imports = await transpileImports(parser);
+    if(imports){
+        lines.push(imports);
+    }
 
     for (const rawLine of oldBody.split("\n")) {
         const line = rawLine.trim();
