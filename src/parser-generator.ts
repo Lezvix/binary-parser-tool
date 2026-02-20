@@ -37,6 +37,38 @@ export async function generateChirpstackV4(
     return lines.join("\n");
 }
 
+export async function generateChirpstackV3(
+    parsers: LoraParsers,
+): Promise<string> {
+    const transpiled = await transpileByPorts(parsers);
+    const ports = Object.keys(parsers).map(Number);
+
+    const readers = new Set<ReaderType>();
+    for (const [_, parser] of transpiled) {
+        for (const reader of parser.readers) {
+            readers.add(reader);
+        }
+    }
+
+    const lines: string[] = [];
+
+    const readersCode = buildReaders(readers);
+    lines.push(readersCode);
+
+    for(const [fPort, parser] of transpiled){
+        const portParser = buildPortParser(fPort, parser);
+        lines.push(portParser);
+    }
+
+    const mainSwitch = buildMainSwitch(ports);
+
+    lines.push("function Decode (fPort, buffer, variables) {");
+    lines.push(mainSwitch)
+    lines.push("}");
+    
+    return lines.join("\n");
+}
+
 function buildMainSwitch(ports: number[]) {
     const lines: string[] = [];
     lines.push("switch(fPort){");
