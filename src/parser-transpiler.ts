@@ -91,7 +91,7 @@ async function transpileImports(parser: Parser): Promise<string> {
 function getDependentReaders(reader: ReaderType): ReaderType[] {
     switch (reader) {
         case "BigUint64LE":
-            return ["BigUint64BE", "Uint32LE"];
+            return ["BigUint64LE", "Uint32LE"];
         case "BigInt64LE":
             return ["BigInt64LE", "Uint32LE", "Int32LE"];
         case "BigUint64BE":
