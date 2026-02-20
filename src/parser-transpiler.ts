@@ -76,6 +76,11 @@ const swcConfig: swc.Options = {
 async function transpileImports(parser: Parser): Promise<string> {
     const oldImports = (parser as any).getContext("imports")
         .imports as Function[];
+
+    if(oldImports.length === 0){
+        return "";
+    }
+
     const lines: string[] = [];
     lines.push("var imports = [");
     for (const imp of oldImports) {
