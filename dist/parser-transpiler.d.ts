@@ -1,5 +1,5 @@
 import type { Parser } from "binary-parser";
-import { ReaderType } from "./readers";
+import { type ReaderType } from "./readers";
 export interface TranspileResult {
     body: string;
     readers: Set<ReaderType>;

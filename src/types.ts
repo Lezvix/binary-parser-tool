@@ -1,4 +1,4 @@
-import { Parser } from "binary-parser";
+import type { Parser } from "binary-parser";
 
 export type LoraParsers = Record<number, Parser>;
 

@@ -9,7 +9,11 @@ export async function transpile(parser) {
     const readers = new Set();
     const lines = [];
     lines.push(imports);
-    for (const line of oldBody.split("\n")) {
+    for (const rawLine of oldBody.split("\n")) {
+        const line = rawLine.trim();
+        if (line === "") {
+            continue;
+        }
         if (dataViewRegexp.test(line)) {
             continue;
         }

@@ -1,6 +1,6 @@
-import { transpile, TranspileResult } from "./parser-transpiler";
-import { readersDictionary, ReaderType } from "./readers";
-import { LoraParsers } from "./types";
+import { transpile, type TranspileResult } from "./parser-transpiler";
+import { readersDictionary, type ReaderType } from "./readers";
+import type { LoraParsers } from "./types";
 
 type PortResult = [number, TranspileResult];
 

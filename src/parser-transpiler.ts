@@ -1,7 +1,7 @@
 import type { Parser } from "binary-parser";
 import swc from "@swc/core";
-import { Kind } from "./types";
-import { getDependentReaders, ReaderType } from "./readers";
+import type { Kind } from "./types";
+import { getDependentReaders, type ReaderType } from "./readers";
 
 const dataViewRegexp =
     /^var dataView = new DataView\(buffer\.buffer, buffer\.byteOffset, buffer.length\);$/;
@@ -24,7 +24,12 @@ export async function transpile(parser: Parser): Promise<TranspileResult> {
 
     lines.push(imports);
 
-    for (const line of oldBody.split("\n")) {
+    for (const rawLine of oldBody.split("\n")) {
+        const line = rawLine.trim();
+        if(line === ""){
+            continue;
+        }
+
         if (dataViewRegexp.test(line)) {
             continue;
         }
@@ -78,7 +83,7 @@ async function transpileImports(parser: Parser): Promise<string> {
     const oldImports = (parser as any).getContext("imports")
         .imports as Function[];
 
-    if(oldImports.length === 0){
+    if (oldImports.length === 0) {
         return "";
     }
 
@@ -93,5 +98,3 @@ async function transpileImports(parser: Parser): Promise<string> {
 
     return output.code;
 }
-
-

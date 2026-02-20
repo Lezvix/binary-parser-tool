@@ -1,4 +1,4 @@
-import { Kind } from "./types";
+import type { Kind } from "./types";
 
 export type ReaderType =
     | `${Exclude<Kind, "Int8" | "Uint8">}${"LE" | "BE"}`
