@@ -27,10 +27,12 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run"
   },
   "devDependencies": {
-    "binary-parser": "^2.3.0"
+    "@types/node": "^25.3.0",
+    "binary-parser": "^2.3.0",
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "@swc/core": "^1.15.11"
