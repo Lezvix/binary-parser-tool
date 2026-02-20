@@ -83,11 +83,6 @@ function buildMainSwitch(ports: number[]) {
 function buildPortParser(fPort: number, parser: TranspileResult): string {
     const lines: string[] = [];
     lines.push(`function parsePort${fPort}(buffer){`);
-    lines.push("var imports = [");
-    for (const imp of parser.imports) {
-        lines.push(`${imp},\n`);
-    }
-    lines.push("];");
     lines.push(parser.body);
     lines.push("}");
     return lines.join("\n");

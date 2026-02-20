@@ -12,7 +12,6 @@ const importCallRegexp =
 export interface TranspileResult {
     body: string;
     readers: Set<ReaderType>;
-    imports: string[];
 }
 
 export async function transpile(parser: Parser): Promise<TranspileResult> {
@@ -20,7 +19,10 @@ export async function transpile(parser: Parser): Promise<TranspileResult> {
     const imports = await transpileImports(parser);
     const readers = new Set<ReaderType>();
 
-    const newLines: string[] = [];
+    const lines: string[] = [];
+    
+    lines.push(imports);
+
     for (const line of oldBody.split("\n")) {
         if (dataViewRegexp.test(line)) {
             continue;
@@ -41,13 +43,12 @@ export async function transpile(parser: Parser): Promise<TranspileResult> {
             }
             
             const newLine = `${variable} = read${readerType}(buffer, offset);`;
-            newLines.push(newLine);
+            lines.push(newLine);
         }
     }
 
     return {
-        body: newLines.join("\n"),
-        imports: imports,
+        body: lines.join("\n"),
         readers: readers,
     };
 }
@@ -69,19 +70,19 @@ const swcConfig: swc.Options = {
     isModule: false,
 };
 
-async function transpileImports(parser: Parser): Promise<string[]> {
+async function transpileImports(parser: Parser): Promise<string> {
     const oldImports = (parser as any).getContext("imports")
         .imports as Function[];
-    const oldImportsText = oldImports.map((imp) => imp.toString());
+    const lines: string[] = [];
+    lines.push("var imports = [");
+    for(const imp of oldImports){
+        lines.push(`${imp},`)
+    }
+    lines.push("];");
 
-    const result = await Promise.all(
-        oldImportsText.map(async (old) => {
-            const output = await swc.transform(old, swcConfig);
-            return output.code;
-        }),
-    );
-
-    return result;
+    const output = await swc.transform(lines.join("\n"), swcConfig);
+    
+    return output.code;
 }
 
 function getDependentReaders(reader: ReaderType): ReaderType[] {
