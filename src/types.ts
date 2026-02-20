@@ -14,8 +14,3 @@ export type Kind =
     | "Uint8"
     | "Uint16"
     | "Uint32";
-
-export type ReaderType =
-    | `${Exclude<Kind, "Int8" | "Uint8">}${"LE" | "BE"}`
-    | "Int8"
-    | "Uint8";

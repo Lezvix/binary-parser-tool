@@ -1,6 +1,7 @@
 import type { Parser } from "binary-parser";
 import swc from "@swc/core";
-import { Kind, ReaderType } from "./types";
+import { Kind } from "./types";
+import { getDependentReaders, ReaderType } from "./readers";
 
 const dataViewRegexp =
     /^var dataView = new DataView\(buffer\.buffer, buffer\.byteOffset, buffer.length\);$/;
@@ -93,17 +94,4 @@ async function transpileImports(parser: Parser): Promise<string> {
     return output.code;
 }
 
-function getDependentReaders(reader: ReaderType): ReaderType[] {
-    switch (reader) {
-        case "BigUint64LE":
-            return ["BigUint64LE", "Uint32LE"];
-        case "BigInt64LE":
-            return ["BigInt64LE", "Uint32LE", "Int32LE"];
-        case "BigUint64BE":
-            return ["BigUint64BE", "Uint32BE"];
-        case "BigInt64BE":
-            return ["BigInt64BE", "Uint32BE", "Int32BE"];
-        default:
-            return [reader];
-    }
-}
+
