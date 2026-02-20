@@ -20,7 +20,7 @@ export async function transpile(parser: Parser): Promise<TranspileResult> {
     const readers = new Set<ReaderType>();
 
     const lines: string[] = [];
-    
+
     lines.push(imports);
 
     for (const line of oldBody.split("\n")) {
@@ -44,7 +44,10 @@ export async function transpile(parser: Parser): Promise<TranspileResult> {
             
             const newLine = `${variable} = read${readerType}(buffer, offset);`;
             lines.push(newLine);
+            continue;
         }
+
+        lines.push(line);
     }
 
     return {
