@@ -1,5 +1,6 @@
 import type { Parser } from "binary-parser";
 import swc from "@swc/core";
+import { Kind, ReaderType } from "./types";
 
 const dataViewRegexp =
     /^var dataView = new DataView\(buffer\.buffer, buffer\.byteOffset, buffer.length\);$/;
@@ -7,24 +8,6 @@ const getValueRegexp =
     /^(?<var>.+)\s=\sdataView.get(?<kind>.+)\(offset,?\s?(?<le>.+)?\);$/;
 const importCallRegexp =
     /^(?<var>\S+)\s=\simports\[(?<id>\d+)\]\.call\((?<args>.+)\);$/;
-
-export type Kind =
-    | "BigInt64"
-    | "BigUint64"
-    | "Float16"
-    | "Float32"
-    | "Float64"
-    | "Int8"
-    | "Int16"
-    | "Int32"
-    | "Uint8"
-    | "Uint16"
-    | "Uint32";
-
-export type ReaderType =
-    | `${Exclude<Kind, "Int8" | "Uint8">}${"LE" | "BE"}`
-    | "Int8"
-    | "Uint8";
 
 export interface TranspileResult {
     body: string;
@@ -52,9 +35,11 @@ export async function transpile(parser: Parser): Promise<TranspileResult> {
             const readerType: ReaderType = isOneByte
                 ? kind
                 : `${kind}${endianness}`;
-
-            readers.add(readerType);
-
+            const requiredReaders = getDependentReaders(readerType);
+            for(const reader of requiredReaders){
+                readers.add(reader);
+            }
+            
             const newLine = `${variable} = read${readerType}(buffer, offset);`;
             newLines.push(newLine);
         }
@@ -82,7 +67,7 @@ const swcConfig: swc.Options = {
     },
     minify: false,
     isModule: false,
-}
+};
 
 async function transpileImports(parser: Parser): Promise<string[]> {
     const oldImports = (parser as any).getContext("imports")
@@ -97,4 +82,19 @@ async function transpileImports(parser: Parser): Promise<string[]> {
     );
 
     return result;
+}
+
+function getDependentReaders(reader: ReaderType): ReaderType[] {
+    switch (reader) {
+        case "BigUint64LE":
+            return ["BigUint64BE", "Uint32LE"];
+        case "BigInt64LE":
+            return ["BigInt64LE", "Uint32LE", "Int32LE"];
+        case "BigUint64BE":
+            return ["BigUint64BE", "Uint32BE"];
+        case "BigInt64BE":
+            return ["BigInt64BE", "Uint32BE", "Int32BE"];
+        default:
+            return [reader];
+    }
 }
