@@ -1,6 +1,6 @@
 import { Parser } from "binary-parser";
 
-export type LoraParsers = Record<number, Parser>
+export type LoraParsers = Record<number, Parser>;
 
 export type Kind =
     | "BigInt64"

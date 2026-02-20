@@ -21,7 +21,7 @@ export async function generateChirpstackV4(
     const readersCode = buildReaders(readers);
     lines.push(readersCode);
 
-    for(const [fPort, parser] of transpiled){
+    for (const [fPort, parser] of transpiled) {
         const portParser = buildPortParser(fPort, parser);
         lines.push(portParser);
     }
@@ -31,9 +31,9 @@ export async function generateChirpstackV4(
     lines.push("function decodeUplink (input) {");
     lines.push("var fPort = input.fPort;");
     lines.push("var buffer = input.bytes;");
-    lines.push(mainSwitch)
+    lines.push(mainSwitch);
     lines.push("}");
-    
+
     return lines.join("\n");
 }
 
@@ -55,7 +55,7 @@ export async function generateChirpstackV3(
     const readersCode = buildReaders(readers);
     lines.push(readersCode);
 
-    for(const [fPort, parser] of transpiled){
+    for (const [fPort, parser] of transpiled) {
         const portParser = buildPortParser(fPort, parser);
         lines.push(portParser);
     }
@@ -63,9 +63,9 @@ export async function generateChirpstackV3(
     const mainSwitch = buildMainSwitch(ports);
 
     lines.push("function Decode (fPort, buffer, variables) {");
-    lines.push(mainSwitch)
+    lines.push(mainSwitch);
     lines.push("}");
-    
+
     return lines.join("\n");
 }
 
@@ -97,7 +97,7 @@ function buildReaders(readers: Set<ReaderType>) {
     return lines.join("\n");
 }
 
-async function transpileByPorts(parsers: LoraParsers): Promise<PortResult[]>{
+async function transpileByPorts(parsers: LoraParsers): Promise<PortResult[]> {
     const parsersEntries = Object.entries(parsers);
     return Promise.all(
         parsersEntries.map(async ([port, parser]) => {

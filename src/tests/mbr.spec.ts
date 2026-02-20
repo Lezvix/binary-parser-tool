@@ -1,6 +1,9 @@
 import { Parser } from "binary-parser";
 import { expect, test } from "vitest";
-import { generateChirpstackV3, generateChirpstackV4 } from "../parser-generator";
+import {
+    generateChirpstackV3,
+    generateChirpstackV4,
+} from "../parser-generator";
 import { readFile } from "fs/promises";
 import { join } from "path";
 import vm from "vm";
@@ -42,72 +45,75 @@ const mbrParser = new Parser()
         assert: 0x55aa,
     });
 
-    const expected = {
-        partitionTables: [
-            {
-                bootFlag: 0,
-                startCHS: { head: 130, sector: 3, cylinder: 0 },
-                type: 12,
-                endCHS: { head: 204, sector: 60, cylinder: 5 },
-                startLBA: 8192,
-                endLBA: 85045,
-            },
-            {
-                bootFlag: 0,
-                startCHS: { head: 220, sector: 24, cylinder: 5 },
-                type: 131,
-                endCHS: { head: 229, sector: 4, cylinder: 225 },
-                startLBA: 94208,
-                endLBA: 3534848,
-            },
-            {
-                bootFlag: 0,
-                startCHS: { head: 0, sector: 0, cylinder: 0 },
-                type: 0,
-                endCHS: { head: 0, sector: 0, cylinder: 0 },
-                startLBA: 0,
-                endLBA: 0,
-            },
-            {
-                bootFlag: 0,
-                startCHS: { head: 0, sector: 0, cylinder: 0 },
-                type: 0,
-                endCHS: { head: 0, sector: 0, cylinder: 0 },
-                startLBA: 0,
-                endLBA: 0,
-            },
-        ],
-        signature: 21930,
-    };
+const expected = {
+    partitionTables: [
+        {
+            bootFlag: 0,
+            startCHS: { head: 130, sector: 3, cylinder: 0 },
+            type: 12,
+            endCHS: { head: 204, sector: 60, cylinder: 5 },
+            startLBA: 8192,
+            endLBA: 85045,
+        },
+        {
+            bootFlag: 0,
+            startCHS: { head: 220, sector: 24, cylinder: 5 },
+            type: 131,
+            endCHS: { head: 229, sector: 4, cylinder: 225 },
+            startLBA: 94208,
+            endLBA: 3534848,
+        },
+        {
+            bootFlag: 0,
+            startCHS: { head: 0, sector: 0, cylinder: 0 },
+            type: 0,
+            endCHS: { head: 0, sector: 0, cylinder: 0 },
+            startLBA: 0,
+            endLBA: 0,
+        },
+        {
+            bootFlag: 0,
+            startCHS: { head: 0, sector: 0, cylinder: 0 },
+            type: 0,
+            endCHS: { head: 0, sector: 0, cylinder: 0 },
+            startLBA: 0,
+            endLBA: 0,
+        },
+    ],
+    signature: 21930,
+};
 
 const mbrBuffer = await readFile(join(__dirname, "mbr-example.img"));
 const bytes = Array.from(mbrBuffer);
 
-type DecoderChirp4 = (input: { fPort: number, 
-    bytes: number[] }) => any
+type DecoderChirp4 = (input: { fPort: number; bytes: number[] }) => any;
 
 test("Compose parser with formatters for ChirpstackV4", async () => {
     const source = await generateChirpstackV4({ 2: mbrParser });
-    
+
     const sandbox = {} as { decodeUplink: DecoderChirp4 };
     const ctx = vm.createContext(sandbox);
     vm.runInContext(source, ctx);
 
     const actual = sandbox.decodeUplink({ fPort: 2, bytes: bytes });
-    
+
     expect(actual).toEqual(expected);
 });
 
-type DecoderChirp3 = (fPort: number, buffer: number[], variables: Record<string, any>) => any
+type DecoderChirp3 = (
+    fPort: number,
+    buffer: number[],
+    variables: Record<string, any>,
+) => any;
 
 test("Compose parser with formatters for ChirpstackV3", async () => {
     const source = await generateChirpstackV3({ 2: mbrParser });
-    
+
     const sandbox = {} as { Decode: DecoderChirp3 };
     const ctx = vm.createContext(sandbox);
     vm.runInContext(source, ctx);
 
     const actual = sandbox.Decode(2, bytes, {});
-    
+
     expect(actual).toEqual(expected);
 });

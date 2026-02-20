@@ -38,10 +38,10 @@ export async function transpile(parser: Parser): Promise<TranspileResult> {
                 ? kind
                 : `${kind}${endianness}`;
             const requiredReaders = getDependentReaders(readerType);
-            for(const reader of requiredReaders){
+            for (const reader of requiredReaders) {
                 readers.add(reader);
             }
-            
+
             const newLine = `${variable} = read${readerType}(buffer, offset);`;
             lines.push(newLine);
             continue;
@@ -78,13 +78,13 @@ async function transpileImports(parser: Parser): Promise<string> {
         .imports as Function[];
     const lines: string[] = [];
     lines.push("var imports = [");
-    for(const imp of oldImports){
-        lines.push(`${imp},`)
+    for (const imp of oldImports) {
+        lines.push(`${imp},`);
     }
     lines.push("];");
 
     const output = await swc.transform(lines.join("\n"), swcConfig);
-    
+
     return output.code;
 }
 

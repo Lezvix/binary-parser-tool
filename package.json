@@ -1,6 +1,6 @@
 {
   "name": "binary-parser-tool",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Utility for generating parsers suitable for Chirpstack v3 and Chirpstack v4, and not only, using binary-parser",
   "keywords": [
     "binary",
@@ -25,13 +25,32 @@
   "license": "MIT",
   "author": "Lezvix",
   "type": "module",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "engines": {
+    "node": "^20.0.0 || >=22.0.0"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc",
     "test": "vitest run"
+  },
+  "peerDependencies": {
+    "binary-parser": ">=2.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.3.0",
     "binary-parser": "^2.3.0",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
   "dependencies": {
