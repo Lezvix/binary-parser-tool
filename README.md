@@ -41,3 +41,6 @@ await Promise.all([
 ]);
 ```
 
+## How to install
+
+`npm install https://github.com/Lezvix/binary-parser-tool.git`
