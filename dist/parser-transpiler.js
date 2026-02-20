@@ -1,4 +1,5 @@
 import swc from "@swc/core";
+import { getDependentReaders } from "./readers";
 const dataViewRegexp = /^var dataView = new DataView\(buffer\.buffer, buffer\.byteOffset, buffer.length\);$/;
 const getValueRegexp = /^(?<var>.+)\s=\sdataView.get(?<kind>.+)\(offset,?\s?(?<le>.+)?\);$/;
 const importCallRegexp = /^(?<var>\S+)\s=\simports\[(?<id>\d+)\]\.call\((?<args>.+)\);$/;
@@ -55,6 +56,9 @@ const swcConfig = {
 async function transpileImports(parser) {
     const oldImports = parser.getContext("imports")
         .imports;
+    if (oldImports.length === 0) {
+        return "";
+    }
     const lines = [];
     lines.push("var imports = [");
     for (const imp of oldImports) {
@@ -63,18 +67,4 @@ async function transpileImports(parser) {
     lines.push("];");
     const output = await swc.transform(lines.join("\n"), swcConfig);
     return output.code;
-}
-function getDependentReaders(reader) {
-    switch (reader) {
-        case "BigUint64LE":
-            return ["BigUint64LE", "Uint32LE"];
-        case "BigInt64LE":
-            return ["BigInt64LE", "Uint32LE", "Int32LE"];
-        case "BigUint64BE":
-            return ["BigUint64BE", "Uint32BE"];
-        case "BigInt64BE":
-            return ["BigInt64BE", "Uint32BE", "Int32BE"];
-        default:
-            return [reader];
-    }
 }
