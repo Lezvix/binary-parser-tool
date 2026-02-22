@@ -18,6 +18,8 @@
         "**/*.test.ts",
         "**/*.spec.ts",
         "dist",
+        "tests",
+        "example",
         "vitest.config.ts",
         "eslint.config.ts",
         "coverage",
