@@ -1,8 +1,8 @@
-import { transpile, type TranspileContext } from "./parser-transpiler";
+import { transpile, type TranspileResult } from "./parser-transpiler";
 import { readersDictionary, type ReaderType } from "./readers";
 import type { LoraParsers } from "./types";
 
-type PortResult = [number, TranspileContext];
+type PortResult = [number, TranspileResult];
 
 export async function generateChirpstackV4(
     parsers: LoraParsers,
@@ -81,7 +81,7 @@ function buildMainSwitch(ports: number[]) {
     return lines.join("\n");
 }
 
-function buildPortParser(fPort: number, parser: TranspileContext): string {
+function buildPortParser(fPort: number, parser: TranspileResult): string {
     const lines: string[] = [];
     lines.push(`function parsePort${fPort}(buffer){`);
     lines.push(parser.body);
