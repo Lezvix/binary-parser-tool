@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getDependentReaders, readersDictionary, type ReaderType } from "../readers";
+import { getDependentReaders, readersDictionary, type ReaderType } from "../src/readers";
 
 function createReader(readerType: ReaderType): (buf: number[], offset: number) => number {
     const deps = getDependentReaders(readerType);

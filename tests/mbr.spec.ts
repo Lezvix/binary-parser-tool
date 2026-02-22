@@ -1,9 +1,9 @@
 import { Parser } from "binary-parser";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import {
     generateChirpstackV3,
     generateChirpstackV4,
-} from "../parser-generator";
+} from "../src/parser-generator";
 import { readFile } from "fs/promises";
 import { join } from "path";
 import vm from "vm";
@@ -88,32 +88,34 @@ const bytes = Array.from(mbrBuffer);
 
 type DecoderChirp4 = (input: { fPort: number; bytes: number[] }) => any;
 
-test("Compose parser with formatters for ChirpstackV4", async () => {
-    const source = await generateChirpstackV4({ 2: mbrParser });
-
-    const sandbox = {} as { decodeUplink: DecoderChirp4 };
-    const ctx = vm.createContext(sandbox);
-    vm.runInContext(source, ctx);
-
-    const actual = sandbox.decodeUplink({ fPort: 2, bytes: bytes });
-
-    expect(actual).toEqual(expected);
-});
-
 type DecoderChirp3 = (
     fPort: number,
     buffer: number[],
     variables: Record<string, any>,
 ) => any;
 
-test("Compose parser with formatters for ChirpstackV3", async () => {
-    const source = await generateChirpstackV3({ 2: mbrParser });
+describe("Composite MBR parser", () => {
+    test("for ChirpstackV4", async () => {
+        const source = await generateChirpstackV4({ 2: mbrParser });
 
-    const sandbox = {} as { Decode: DecoderChirp3 };
-    const ctx = vm.createContext(sandbox);
-    vm.runInContext(source, ctx);
+        const sandbox = {} as { decodeUplink: DecoderChirp4 };
+        const ctx = vm.createContext(sandbox);
+        vm.runInContext(source, ctx);
 
-    const actual = sandbox.Decode(2, bytes, {});
+        const actual = sandbox.decodeUplink({ fPort: 2, bytes: bytes });
 
-    expect(actual).toEqual(expected);
-});
+        expect(actual).toEqual(expected);
+    });
+
+    test("for ChirpstackV3", async () => {
+        const source = await generateChirpstackV3({ 2: mbrParser });
+
+        const sandbox = {} as { Decode: DecoderChirp3 };
+        const ctx = vm.createContext(sandbox);
+        vm.runInContext(source, ctx);
+
+        const actual = sandbox.Decode(2, bytes, {});
+
+        expect(actual).toEqual(expected);
+    });
+})
