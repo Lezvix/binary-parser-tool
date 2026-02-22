@@ -1,6 +1,6 @@
 {
   "name": "binary-parser-tool",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Utility for generating parsers suitable for Chirpstack v3 and Chirpstack v4, and not only, using binary-parser",
   "keywords": [
     "binary",

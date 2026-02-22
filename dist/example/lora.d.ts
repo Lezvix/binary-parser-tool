@@ -1,0 +1,10 @@
+import { Parser } from "binary-parser";
+export declare const standardSubpacket: Parser;
+export declare const timestampSubpacket: Parser;
+export declare const oneWireSensor: Parser;
+export declare const oneWireSubpacket: Parser;
+export declare const modbusSubpacket: Parser;
+export declare const subpacket: Parser;
+export declare const port2Parser: Parser;
+export declare const settingsEntry: Parser;
+export declare const port3Parser: Parser;
